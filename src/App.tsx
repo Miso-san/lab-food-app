@@ -8,7 +8,7 @@ import { SearchBar } from "./components/SearchBar";
 import { useFavorites } from "./hooks/useFavorites";
 import { useDarkMode } from "./hooks/useDarkMode";
 
-const members = membersData as Member[];
+const members = membersData as unknown as Member[];
 
 export default function App() {
   const { isDark, toggle: toggleDark } = useDarkMode();
