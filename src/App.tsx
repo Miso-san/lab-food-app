@@ -231,7 +231,7 @@ export default function App() {
         <MemberDetail
           member={selectedMember}
           onClose={() => setSelectedMember(null)}
-          onEdit={m => { setEditTarget(m); setFormMode("edit"); setSelectedMember(null); }}
+          onEdit={(m: Member) => { setEditTarget(m); setFormMode("edit"); setSelectedMember(null); }}
           onDelete={handleDelete}
         />
       )}
