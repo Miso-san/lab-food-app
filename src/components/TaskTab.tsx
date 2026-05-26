@@ -12,7 +12,7 @@ interface TaskTabProps {
 const CHOICES = [
   { label: "好き", key: "likes", color: "bg-pink-50 dark:bg-pink-900/20 border-pink-200 dark:border-pink-800 text-pink-600 dark:text-pink-300 hover:bg-pink-100 dark:hover:bg-pink-900/40" },
   { label: "嫌い", key: "dislikes", color: "bg-sky-50 dark:bg-sky-900/20 border-sky-200 dark:border-sky-800 text-sky-600 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/40" },
-  { label: "どちらでもない", key: null, color: "bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600" },
+  { label: "どちらでもない", key: "neutral", color: "bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600" },
   { label: "食べたことがない", key: "neverEaten", color: "bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600" },
 ] as const;
 
@@ -22,6 +22,7 @@ function isAssigned(member: Member, food: string): boolean {
     member.likes.includes(food) ||
     member.dislikes.includes(food) ||
     (member.neverEaten ?? []).includes(food) ||
+    (member.neutral ?? []).includes(food) ||
     member.conditionalFoods.some(cf => cf.food === food)
   );
 }
