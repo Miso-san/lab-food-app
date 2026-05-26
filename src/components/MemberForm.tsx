@@ -11,7 +11,7 @@ interface MemberFormProps {
 
 const EMPTY: Member = {
   id: "", name: "", likes: [], dislikes: [], allergies: [],
-  neverEaten: [], conditionalFoods: [], rankings: {}, memo: "",
+  conditionalFoods: [], rankings: {}, memo: "",
 };
 
 function TagInput({ label, values, onChange, placeholder, variant }: {
