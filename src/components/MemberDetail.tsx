@@ -60,7 +60,7 @@ export function MemberDetail({ member, onClose, onEdit, onDelete }: MemberDetail
             {member.name.charAt(0)}
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{member.name}さん</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{member.name}</h2>
             {member.allergies.length > 0 && <p className="text-xs text-red-500 dark:text-red-400">⚠ アレルギーあり</p>}
           </div>
           <div className="flex items-center gap-1">
