@@ -10,6 +10,7 @@ export interface Member {
   likes: string[];
   dislikes: string[];
   allergies: string[];
+  neverEaten: string[];
   conditionalFoods: ConditionalFood[];
   rankings: Record<string, string[]>;
   memo?: string;
