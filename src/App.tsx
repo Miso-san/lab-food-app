@@ -1,14 +1,15 @@
 import { useState, useEffect, useMemo } from "react";
-import { Moon, Sun, Star, Users, Loader2, Plus } from "lucide-react";
+import { Moon, Sun, Star, Users, Loader2, Plus, ListTodo } from "lucide-react";
 import { Member, FilterType } from "./types";
 import { MemberCard } from "./components/MemberCard";
 import { MemberDetail } from "./components/MemberDetail";
 import { MemberForm } from "./components/MemberForm";
 import { SearchBar } from "./components/SearchBar";
+import { TaskTab } from "./components/TaskTab";
 import { useFavorites } from "./hooks/useFavorites";
 import { useDarkMode } from "./hooks/useDarkMode";
 
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzTAOhc9X34suOh_J-DfOow1VksJjCoQfvjaVsrJh4T0wSlkmDd7DGi2QIVtyjgoPtDMg/exec";
+const GAS_URL = "YOUR_GAS_URL_HERE";
 
 export function parseMemberRow(row: Record<string, string>): Member {
   const split = (s: string) => s ? s.split("，").map(x => x.trim()).filter(Boolean) : [];
@@ -29,6 +30,7 @@ export function parseMemberRow(row: Record<string, string>): Member {
     likes: split(row.likes),
     dislikes: split(row.dislikes),
     allergies: split(row.allergies),
+    neverEaten: split(row.neverEaten),
     conditionalFoods,
     rankings,
     memo: row.memo ?? "",
@@ -42,6 +44,7 @@ export function memberToRow(member: Member): Record<string, string> {
     likes: member.likes.join("，"),
     dislikes: member.dislikes.join("，"),
     allergies: member.allergies.join("，"),
+    neverEaten: (member.neverEaten ?? []).join("，"),
     conditionalFoods: member.conditionalFoods.map(cf => `${cf.food}:${cf.condition}`).join("，"),
     rankings: Object.entries(member.rankings).map(([k, v]) => `${k}=${v.join("，")}`).join(";"),
     memo: member.memo ?? "",
@@ -56,6 +59,8 @@ export async function apiCall(action: string, member: Member) {
   return res.json();
 }
 
+type Tab = "members" | "task";
+
 export default function App() {
   const { isDark, toggle: toggleDark } = useDarkMode();
   const { toggleFavorite, isFavorite } = useFavorites();
@@ -69,6 +74,7 @@ export default function App() {
   const [filter, setFilter] = useState<FilterType>("all");
   const [dislikeSearch, setDislikeSearch] = useState("");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [tab, setTab] = useState<Tab>("members");
 
   const fetchMembers = () => {
     setLoading(true);
@@ -151,31 +157,87 @@ export default function App() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => { setEditTarget(null); setFormMode("add"); }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-            >
-              <Plus size={14} />
-              <span>メンバー追加</span>
-            </button>
-            <button
-              onClick={() => setShowFavoritesOnly(v => !v)}
-              className={`p-2 rounded-xl transition-colors ${showFavoritesOnly ? "bg-amber-100 dark:bg-amber-900/40 text-amber-500" : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400"}`}
-            >
-              <Star size={18} className={showFavoritesOnly ? "fill-amber-400" : ""} />
-            </button>
+            {tab === "members" && (
+              <>
+                <button
+                  onClick={() => { setEditTarget(null); setFormMode("add"); }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                >
+                  <Plus size={14} />
+                  <span className="hidden sm:inline">メンバー追加</span>
+                  <span className="sm:hidden">追加</span>
+                </button>
+                <button
+                  onClick={() => setShowFavoritesOnly(v => !v)}
+                  className={`p-2 rounded-xl transition-colors ${showFavoritesOnly ? "bg-amber-100 dark:bg-amber-900/40 text-amber-500" : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400"}`}
+                >
+                  <Star size={18} className={showFavoritesOnly ? "fill-amber-400" : ""} />
+                </button>
+              </>
+            )}
             <button onClick={toggleDark} className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition-colors">
               {isDark ? <Sun size={18} /> : <Moon size={18} />}
             </button>
           </div>
         </div>
+
+        {/* タブ */}
+        <div className="max-w-6xl mx-auto px-4 flex gap-1 pb-0">
+          <button
+            onClick={() => setTab("members")}
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+              tab === "members"
+                ? "border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400"
+                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+            }`}
+          >
+            <Users size={14} />
+            メンバー
+          </button>
+          <button
+            onClick={() => setTab("task")}
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+              tab === "task"
+                ? "border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400"
+                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+            }`}
+          >
+            <ListTodo size={14} />
+            タスク
+          </button>
+        </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-4 py-5 lg:flex lg:gap-6">
-        <aside className="lg:w-72 lg:flex-shrink-0">
-          <div className="lg:sticky lg:top-20 space-y-4">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 shadow-sm">
-              <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-3">検索・絞り込み</p>
+      {tab === "task" ? (
+        <TaskTab members={members} onUpdate={handleUpdate} />
+      ) : (
+        <div className="max-w-6xl mx-auto px-4 py-5 lg:flex lg:gap-6">
+          <aside className="lg:w-72 lg:flex-shrink-0">
+            <div className="lg:sticky lg:top-24 space-y-4">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 shadow-sm">
+                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-3">検索・絞り込み</p>
+                <SearchBar
+                  query={query} onQueryChange={setQuery}
+                  filter={filter} onFilterChange={setFilter}
+                  dislikeSearch={dislikeSearch} onDislikeSearchChange={setDislikeSearch}
+                  totalCount={members.length} filteredCount={displayMembers.length}
+                />
+              </div>
+              <div className="hidden lg:grid grid-cols-2 gap-3">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 shadow-sm text-center">
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{members.length}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">メンバー数</p>
+                </div>
+                <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 shadow-sm text-center">
+                  <p className="text-2xl font-bold text-red-500 dark:text-red-400">{members.filter(m => m.allergies.length > 0).length}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">アレルギー</p>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <main className="flex-1 min-w-0 mt-4 lg:mt-0">
+            <div className="lg:hidden mb-4">
               <SearchBar
                 query={query} onQueryChange={setQuery}
                 filter={filter} onFilterChange={setFilter}
@@ -183,49 +245,28 @@ export default function App() {
                 totalCount={members.length} filteredCount={displayMembers.length}
               />
             </div>
-            <div className="hidden lg:grid grid-cols-2 gap-3">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 shadow-sm text-center">
-                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{members.length}</p>
-                <p className="text-xs text-gray-400 mt-0.5">メンバー数</p>
+            {displayMembers.length === 0 ? (
+              <div className="py-24 text-center text-gray-400 dark:text-gray-600">
+                <p className="text-4xl mb-3">🍽️</p>
+                <p className="text-sm">該当するメンバーが見つかりません</p>
               </div>
-              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 shadow-sm text-center">
-                <p className="text-2xl font-bold text-red-500 dark:text-red-400">{members.filter(m => m.allergies.length > 0).length}</p>
-                <p className="text-xs text-gray-400 mt-0.5">アレルギー</p>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                {displayMembers.map(member => (
+                  <MemberCard
+                    key={member.id}
+                    member={member}
+                    isFavorite={isFavorite(member.id)}
+                    onToggleFavorite={toggleFavorite}
+                    onClick={setSelectedMember}
+                    highlightDislike={dislikeSearch.trim() || undefined}
+                  />
+                ))}
               </div>
-            </div>
-          </div>
-        </aside>
-
-        <main className="flex-1 min-w-0 mt-4 lg:mt-0">
-          <div className="lg:hidden mb-4">
-            <SearchBar
-              query={query} onQueryChange={setQuery}
-              filter={filter} onFilterChange={setFilter}
-              dislikeSearch={dislikeSearch} onDislikeSearchChange={setDislikeSearch}
-              totalCount={members.length} filteredCount={displayMembers.length}
-            />
-          </div>
-          {displayMembers.length === 0 ? (
-            <div className="py-24 text-center text-gray-400 dark:text-gray-600">
-              <p className="text-4xl mb-3">🍽️</p>
-              <p className="text-sm">該当するメンバーが見つかりません</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-              {displayMembers.map(member => (
-                <MemberCard
-                  key={member.id}
-                  member={member}
-                  isFavorite={isFavorite(member.id)}
-                  onToggleFavorite={toggleFavorite}
-                  onClick={setSelectedMember}
-                  highlightDislike={dislikeSearch.trim() || undefined}
-                />
-              ))}
-            </div>
-          )}
-        </main>
-      </div>
+            )}
+          </main>
+        </div>
+      )}
 
       {selectedMember && (
         <MemberDetail
@@ -235,7 +276,6 @@ export default function App() {
           onDelete={handleDelete}
         />
       )}
-
       {formMode && (
         <MemberForm
           mode={formMode}
