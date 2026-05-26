@@ -51,7 +51,7 @@ export function MemberCard({ member, isFavorite, onToggleFavorite, onClick, high
 
         {/* 名前 */}
         <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">
-          {member.name}さん
+          {member.name}
         </h3>
 
         {/* 好きな食べ物 */}
