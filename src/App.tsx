@@ -9,7 +9,7 @@ import { TaskTab } from "./components/TaskTab";
 import { useFavorites } from "./hooks/useFavorites";
 import { useDarkMode } from "./hooks/useDarkMode";
 
-const GAS_URL = "YOUR_GAS_URL_HERE";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzTAOhc9X34suOh_J-DfOow1VksJjCoQfvjaVsrJh4T0wSlkmDd7DGi2QIVtyjgoPtDMg/exec";
 
 export function parseMemberRow(row: Record<string, string>): Member {
   const split = (s: string) => s ? s.split("，").map(x => x.trim()).filter(Boolean) : [];
