@@ -191,7 +191,6 @@ function FoodTaskView({ food, members, onUpdate }: {
 
 // メインコンポーネント
 export function TaskTab({ members, onUpdate, taskFoods, onTaskFoodsChange }: TaskTabProps) {
-  const [taskFoods, setTaskFoods] = useState<string[]>([]);
   const [newFood, setNewFood] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"member" | "food">("member");
