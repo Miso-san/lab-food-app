@@ -11,6 +11,7 @@ export interface Member {
   dislikes: string[];
   allergies: string[];
   neverEaten?: string[];
+  neutral?: string[];
   conditionalFoods: ConditionalFood[];
   rankings: Record<string, string[]>;
   memo?: string;
