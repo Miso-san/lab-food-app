@@ -1,5 +1,5 @@
 import { Member } from "../types";
-import { X, Heart, ThumbsDown, AlertTriangle, Info, Trophy, Pencil, Trash2 } from "lucide-react";
+import { X, Heart, ThumbsDown, AlertTriangle, Info, Trophy, Pencil, Trash2, Utensils } from "lucide-react";
 
 interface MemberDetailProps {
   member: Member;
@@ -33,12 +33,13 @@ function Section({ icon, title, color, children }: {
   );
 }
 
-function TagList({ items, variant }: { items: string[]; variant: "default" | "bad" | "alert" }) {
+function TagList({ items, variant }: { items: string[]; variant: "default" | "bad" | "alert" | "never" }) {
   if (items.length === 0) return <p className="text-sm text-gray-400 dark:text-gray-500">なし</p>;
   const cls = {
     default: "bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600",
     bad: "bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800",
     alert: "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800",
+    never: "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-600",
   }[variant];
   return (
     <div className="flex flex-wrap gap-1.5">
@@ -63,15 +64,9 @@ export function MemberDetail({ member, onClose, onEdit, onDelete }: MemberDetail
             {member.allergies.length > 0 && <p className="text-xs text-red-500 dark:text-red-400">⚠ アレルギーあり</p>}
           </div>
           <div className="flex items-center gap-1">
-            <button onClick={() => onEdit(member)} className="p-2 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-500 transition-colors" aria-label="編集">
-              <Pencil size={17} />
-            </button>
-            <button onClick={() => onDelete(member)} className="p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-red-400 transition-colors" aria-label="削除">
-              <Trash2 size={17} />
-            </button>
-            <button onClick={onClose} className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500">
-              <X size={20} />
-            </button>
+            <button onClick={() => onEdit(member)} className="p-2 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-500 transition-colors"><Pencil size={17} /></button>
+            <button onClick={() => onDelete(member)} className="p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-red-400 transition-colors"><Trash2 size={17} /></button>
+            <button onClick={onClose} className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500"><X size={20} /></button>
           </div>
         </div>
 
@@ -86,10 +81,10 @@ export function MemberDetail({ member, onClose, onEdit, onDelete }: MemberDetail
               <TagList items={member.allergies} variant="alert" />
             </Section>
           )}
-          <Section icon={<Heart size={14} />} title="好きな食べ物" color="text-emerald-600 dark:text-emerald-400">
+          <Section icon={<Heart size={14} />} title="好きな食べ物" color="text-pink-500 dark:text-pink-400">
             <TagList items={member.likes} variant="default" />
           </Section>
-          <Section icon={<ThumbsDown size={14} />} title="苦手な食べ物" color="text-orange-600 dark:text-orange-400">
+          <Section icon={<ThumbsDown size={14} />} title="苦手な食べ物" color="text-sky-500 dark:text-sky-400">
             <TagList items={member.dislikes} variant="bad" />
           </Section>
           {member.conditionalFoods.length > 0 && (
@@ -103,6 +98,11 @@ export function MemberDetail({ member, onClose, onEdit, onDelete }: MemberDetail
                   </div>
                 ))}
               </div>
+            </Section>
+          )}
+          {(member.neverEaten ?? []).length > 0 && (
+            <Section icon={<Utensils size={14} />} title="食べたことがない" color="text-gray-500 dark:text-gray-400">
+              <TagList items={member.neverEaten ?? []} variant="never" />
             </Section>
           )}
           {Object.keys(member.rankings).length > 0 && (
