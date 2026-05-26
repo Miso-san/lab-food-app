@@ -5,6 +5,8 @@ import { Plus, X, SkipForward, Users, Utensils } from "lucide-react";
 interface TaskTabProps {
   members: Member[];
   onUpdate: (member: Member) => Promise<void>;
+  taskFoods: string[];
+  onTaskFoodsChange: (foods: string[]) => void;
 }
 
 const CHOICES = [
@@ -187,7 +189,7 @@ function FoodTaskView({ food, members, onUpdate }: {
 }
 
 // メインコンポーネント
-export function TaskTab({ members, onUpdate }: TaskTabProps) {
+export function TaskTab({ members, onUpdate, taskFoods, onTaskFoodsChange }: TaskTabProps) {
   const [taskFoods, setTaskFoods] = useState<string[]>([]);
   const [newFood, setNewFood] = useState("");
   const [message, setMessage] = useState<string | null>(null);
@@ -208,12 +210,12 @@ export function TaskTab({ members, onUpdate }: TaskTabProps) {
       setNewFood("");
       return;
     }
-    setTaskFoods(prev => [...prev, f]);
+    onTaskFoodsChange([...taskFoods, f]);
     setNewFood("");
   };
 
   const removeFood = (food: string) => {
-    setTaskFoods(prev => prev.filter(f => f !== food));
+    onTaskFoodsChange(taskFoods.filter(f => f !== food));
     if (selectedFood === food) setSelectedFood("");
   };
 
