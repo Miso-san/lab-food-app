@@ -75,6 +75,7 @@ export default function App() {
   const [dislikeSearch, setDislikeSearch] = useState("");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [tab, setTab] = useState<Tab>("members");
+  const [taskFoods, setTaskFoods] = useState<string[]>([]);
 
   const fetchMembers = () => {
     setLoading(true);
@@ -209,7 +210,7 @@ export default function App() {
       </header>
 
       {tab === "task" ? (
-        <TaskTab members={members} onUpdate={handleUpdate} />
+        <TaskTab members={members} onUpdate={handleUpdate} taskFoods={taskFoods} onTaskFoodsChange={setTaskFoods} />
       ) : (
         <div className="max-w-6xl mx-auto px-4 py-5 lg:flex lg:gap-6">
           <aside className="lg:w-72 lg:flex-shrink-0">
