@@ -32,80 +32,57 @@ export function MemberCard({ member, isFavorite, onToggleFavorite, onClick, high
 
   return (
     <div
-      className="relative bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer group"
+      className="relative bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
       onClick={() => onClick(member)}
     >
-      {/* お気に入りボタン */}
       <button
         className="absolute top-3 right-3 z-10 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggleFavorite(member.id);
-        }}
+        onClick={(e) => { e.stopPropagation(); onToggleFavorite(member.id); }}
         aria-label={isFavorite ? "お気に入り解除" : "お気に入り追加"}
       >
-        <Star
-          size={16}
-          className={isFavorite ? "fill-amber-400 text-amber-400" : "text-gray-300 dark:text-gray-600"}
-        />
+        <Star size={16} className={isFavorite ? "fill-amber-400 text-amber-400" : "text-gray-300 dark:text-gray-600"} />
       </button>
 
-      <div className="p-5">
+      <div className="p-4">
         {/* アバター */}
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold mb-4 ${colorClass}`}>
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold mb-3 ${colorClass}`}>
           {member.name.charAt(0)}
         </div>
 
         {/* 名前 */}
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">
           {member.name}さん
         </h3>
 
-        {/* バッジ */}
-        <div className="flex flex-wrap gap-1.5 mb-3">
-          {hasAllergy && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800">
-              ⚠ アレルギーあり
+        {/* 好きな食べ物 */}
+        {member.likes.length > 0 && (
+          <p className="text-xs mb-1 leading-relaxed">
+            <span className="text-pink-400">♡</span>
+            <span className="text-pink-500 dark:text-pink-400 ml-1">
+              {member.likes.slice(0, 3).join("、")}
+              {member.likes.length > 3 && `…`}
             </span>
-          )}
-          {member.conditionalFoods.length > 0 && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-50 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800">
-              条件付きあり
-            </span>
-          )}
-        </div>
-
-        {/* 嫌いな食べ物ハイライト */}
-        {matchingDislike && (
-          <div className="mt-2 px-2 py-1.5 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 text-xs text-orange-700 dark:text-orange-400">
-            ✗ {matchingDislike} が苦手
-          </div>
+          </p>
         )}
 
-        {/* 好きな食べ物プレビュー */}
-        {!matchingDislike && member.likes.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {member.likes.slice(0, 3).map((food) => (
-              <span
-                key={food}
-                className="px-2 py-0.5 rounded-full text-xs bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600"
-              >
-                {food}
-              </span>
-            ))}
-            {member.likes.length > 3 && (
-              <span className="px-2 py-0.5 rounded-full text-xs text-gray-400 dark:text-gray-500">
-                +{member.likes.length - 3}
-              </span>
-            )}
-          </div>
+        {/* 苦手な食べ物 */}
+        {member.dislikes.length > 0 && (
+          <p className="text-xs mb-1 leading-relaxed">
+            <span className="text-sky-400">✕</span>
+            <span className="text-sky-500 dark:text-sky-400 ml-1">
+              {matchingDislike
+                ? <span className="font-semibold">{matchingDislike}</span>
+                : <>{member.dislikes.slice(0, 3).join("、")}{member.dislikes.length > 3 && `…`}</>
+              }
+            </span>
+          </p>
         )}
 
-        {/* アレルギー詳細 */}
+        {/* アレルギー */}
         {hasAllergy && (
-          <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-            <p className="text-xs text-red-500 dark:text-red-400 font-medium">
-              アレルギー: {member.allergies.join("、")}
+          <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+            <p className="text-xs text-red-500 dark:text-red-400">
+              アレルギー：{member.allergies.join("、")}
             </p>
           </div>
         )}
